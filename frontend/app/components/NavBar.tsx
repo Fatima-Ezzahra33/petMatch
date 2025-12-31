@@ -62,8 +62,8 @@ export default function NavBar() {
           <img
             src={
               isDarkMode
-                ? "public/pet-MatchWhite.png"
-                : "public/pet-MatchBlack.png"
+                ? "/pet-MatchWhite.png"
+                : "/pet-MatchBlack.png"
             }
             alt="pet"
             className="w-30"
@@ -186,8 +186,8 @@ export default function NavBar() {
               <img
                 src={
               isDarkMode
-                ? "public/pet-MatchWhite.png"
-                : "public/pet-MatchBlack.png"
+                ? "/pet-MatchWhite.png"
+                : "/pet-MatchBlack.png"
             }
                 alt="petMatch"
                 className="w-16"

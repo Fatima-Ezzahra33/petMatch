@@ -102,8 +102,8 @@ export default function Register() {
             <img
               src={
                 isDarkMode
-                  ? "public/pet-MatchWhite.png"
-                  : "public/pet-MatchBlack.png"
+                  ? "/pet-MatchWhite.png"
+                  : "/pet-MatchBlack.png"
               }
               alt="PetMatch"
               className="w-32"
@@ -218,8 +218,8 @@ export default function Register() {
                 <img
                   src={
                     isDarkMode
-                      ? "public/pet-MatchWhite.png"
-                      : "public/pet-MatchBlack.png"
+                      ? "/pet-MatchWhite.png"
+                      : "/pet-MatchBlack.png"
                   }
                   alt="pet"
                   className="w-40 sm:w-30 lg:w-50 mx-auto mb-4"

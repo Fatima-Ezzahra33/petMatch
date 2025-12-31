@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class PetMatchController extends Controller
 {
-    public function matchPets(Request $request) 
+    public function matchPets(Request $request)
     {
         Log::info('=== MATCH PETS REQUEST ===', [
             'user_message' => $request->input('user_message')
@@ -24,11 +24,11 @@ class PetMatchController extends Controller
 
                 if ($prefResponse instanceof \Illuminate\Http\JsonResponse) {
                     $statusCode = $prefResponse->getStatusCode();
-                    
+
                     if ($statusCode === 200) {
                         $data = $prefResponse->getData(true);
                         $preferences = $data['preferences'] ?? null;
-                        
+
                         Log::info('=== AI EXTRACTION SUCCESSFUL ===', [
                             'preferences' => $preferences
                         ]);
@@ -48,7 +48,7 @@ class PetMatchController extends Controller
         // Fallback
         if ($preferences === null) {
             Log::warning('=== USING FALLBACK PREFERENCES ===');
-            
+
             $validated = $request->validate([
                 'species' => 'array|nullable',
                 'type' => 'array|nullable',
@@ -59,7 +59,7 @@ class PetMatchController extends Controller
                 'status' => 'string|nullable',
                 'keywords' => 'array|nullable',
             ]);
-            
+
             $preferences = [
                 'species' => $validated['species'] ?? [],
                 'type' => $validated['type'] ?? [],
@@ -79,12 +79,12 @@ class PetMatchController extends Controller
         $preferences['keywords'] = $preferences['keywords'] ?? [];
 
         // Check if we have any meaningful preferences
-        $hasPreferences = !empty($preferences['species']) || 
-                         !empty($preferences['type']) || 
-                         $preferences['gender'] !== null || 
-                         $preferences['age']['min'] !== null || 
-                         $preferences['age']['max'] !== null ||
-                         !empty($preferences['keywords']);
+        $hasPreferences = !empty($preferences['species']) ||
+            !empty($preferences['type']) ||
+            $preferences['gender'] !== null ||
+            $preferences['age']['min'] !== null ||
+            $preferences['age']['max'] !== null ||
+            !empty($preferences['keywords']);
 
         if (!$hasPreferences) {
             return response()->json([
@@ -119,7 +119,8 @@ class PetMatchController extends Controller
             $maxPossibleScore += 20;
         }
         if (!empty($preferences['keywords'])) {
-            $maxPossibleScore += (10 * count($preferences['keywords']));
+            $keywordCount = min(count($preferences['keywords']), 5); // Max 5 keywords
+            $maxPossibleScore += (10 * $keywordCount);
         }
 
         Log::info('=== SCORING SETUP ===', ['max_possible_score' => $maxPossibleScore]);
@@ -140,7 +141,20 @@ class PetMatchController extends Controller
 
             // Type match (+20)
             if (!empty($preferences['type'])) {
-                if (in_array(strtolower($pet->type), array_map('strtolower', $preferences['type']))) {
+                $petType = strtolower(trim($pet->type));
+                $matched = false;
+
+                foreach ($preferences['type'] as $prefType) {
+                    $prefType = strtolower(trim($prefType));
+
+                    // Check if either string contains the other
+                    if (str_contains($petType, $prefType) || str_contains($prefType, $petType)) {
+                        $matched = true;
+                        break;
+                    }
+                }
+
+                if ($matched) {
                     $score += 20;
                     $matchDetails[] = 'type';
                 }
@@ -165,10 +179,14 @@ class PetMatchController extends Controller
             }
 
             // Keywords in description (+10 each)
+            $keywordsMatched = 0;
             foreach ($preferences['keywords'] as $keyword) {
+                if ($keywordsMatched >= 5) break; // Stop after 5 matches
+
                 if (!empty($keyword) && stripos((string)($pet->description ?? ''), (string)$keyword) !== false) {
                     $score += 10;
                     $matchDetails[] = "keyword:{$keyword}";
+                    $keywordsMatched++;
                 }
             }
 
@@ -197,17 +215,17 @@ class PetMatchController extends Controller
         });
 
         // STRICT FILTERING: Only return requested species
-        $matchingPets = array_filter($scoredPets, function($pet) use ($preferences) {
+        $matchingPets = array_filter($scoredPets, function ($pet) use ($preferences) {
             // Must have score > 0
             if ($pet['score'] <= 0) {
                 return false;
             }
-            
+
             // If species was specified, pet MUST match one of them
             if (!empty($preferences['species'])) {
                 return in_array(strtolower($pet['species']), array_map('strtolower', $preferences['species']));
             }
-            
+
             // If no species specified, include all pets with score > 0
             return true;
         });
@@ -227,9 +245,9 @@ class PetMatchController extends Controller
 
         $finalPets = array_values($matchingPets);
         $topScore = $finalPets[0]['score'];
-        
+
         if ($topScore >= 80) {
-            $message = '🎉 Found ' . count($finalPets) . ' excellent matches!';
+            $message = '🐾 Found ' . count($finalPets) . ' excellent matches!';
         } elseif ($topScore >= 50) {
             $message = '🐾 Found ' . count($finalPets) . ' good matches!';
         } else {

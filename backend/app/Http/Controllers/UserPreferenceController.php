@@ -18,30 +18,117 @@ class UserPreferenceController extends Controller
 
         // Prompt très précis pour obtenir un JSON parfait
         $prompt = <<<PROMPT
-Tu es un assistant expert qui transforme un message naturel d'un utilisateur en un JSON structuré pour une recherche d'animaux de compagnie.
+You are an expert assistant that converts a user's natural-language message
+(in ANY language) into a structured JSON object for pet search.
 
-Règles strictes :
-- "species" : tableau de chaînes minuscules, seulement "dog" ou "cat" (ou les deux si mentionnés). Vide [] si non précisé.
-- "type" : tableau de races/types en minuscules (ex: "pomeranian", "chihuahua", "persian", "british shorthair"). Vide [] si non précisé.
-- "gender" : "male", "female" ou null si non précisé ou ambigu.
-- "age" : objet avec "min" (integer ou null) et "max" (integer ou null). Utilise null si pas de borne.
-- "status" : toujours "available".
-- "keywords" : tableau de mots-clés descriptifs trouvés dans le message (ex: calme, joueur, appartement, enfants). Minuscules, vide [] si aucun.
+IMPORTANT:
+- The user input may be in any language.
+- You must ALWAYS output normalized ENGLISH values that match database fields.
 
-Réponds UNIQUEMENT avec du JSON valide, rien d'autre (pas de texte, pas de ```json).
+OBJECTIVE:
+Extract explicit information and semantically interpret vague descriptions
+ONLY for the "keywords" field.
 
-Exemple de message :
-"Je cherche un petit chien calme pour appartement, pomeranian ou chihuahua, mâle ou femelle, entre 1 et 5 ans, ou un chat persan tranquille."
+STRICT RULES:
 
-JSON attendu :
+1) "species"
+- Array of lowercase strings.
+- Allowed values ONLY: "dog", "cat".
+- Include ONLY if explicitly mentioned by the user (in any language).
+- Empty [] if not specified.
+- NEVER infer species.
+
+2) "type"
+- Array of lowercase breed/type names in English.
+- NORMALIZE breed names to their BASE FORM:
+  * "siberian husky" → "husky"
+  * "golden retriever" → "retriever" 
+  * "british shorthair" → "shorthair"
+  * "maine coon" → "coon"
+- If a specific breed is mentioned, extract BOTH the full name AND the base breed:
+  * User says "siberian husky" → output: ["siberian husky", "husky"]
+  * User says "golden" → output: ["golden retriever", "retriever"]
+- Include ONLY if explicitly mentioned.
+- Empty [] if not specified.
+
+3) "gender"
+- "male", "female", or null.
+- Null if not explicitly stated or if ambiguous.
+
+4) "age"
+- Object with:
+  - "min": integer or null
+  - "max": integer or null
+- Use null if no boundary is provided.
+
+5) "status"
+- Always "available".
+
+6) "keywords" (SEMANTIC INTERPRETATION ALLOWED)
+- Array of lowercase ENGLISH keywords matching database values.
+- Interpret vague, informal, exaggerated, or slang descriptions.
+
+SEMANTIC INFERENCE RULES FOR "keywords":
+
+PLAYFUL / ENERGETIC:
+- Examples (any language):
+  "plays a lot", "very playful", "hyper", "full of energy",
+  "joue beaucoup", "très joueur", "activo", "muy energético",
+  "a lotttt", "soooo playful"
+→ add: "playful", "energetic"
+
+CALM / QUIET:
+- Examples:
+  "calm", "quiet", "chill", "relaxed",
+  "calme", "tranquille", "posé"
+→ add: "calm"
+
+ENVIRONMENT:
+- Examples:
+  "apartment", "small space",
+  "appartement", "piso pequeño"
+→ add: "apartment"
+
+FAMILY / KIDS:
+- Examples:
+  "kids", "children", "family",
+  "enfants", "famille", "niños"
+→ add: "kids", "family"
+
+NORMALIZATION:
+- Ignore repeated letters ("lotttt", "soooo").
+- Normalize meanings to standard English keywords.
+- Output ONLY keywords that exist in the database vocabulary.
+
+IMPORTANT CONSTRAINTS:
+- NEVER infer species, breed, gender, or age.
+- Semantic inference is allowed ONLY for "keywords".
+- Do NOT add assumptions beyond clear meaning.
+
+FINAL JSON STRUCTURE (KEYS AND TYPES MUST MATCH, VALUES ARE DYNAMIC):
+
 {
-    "species": ["dog", "cat"],
-    "type": ["pomeranian", "chihuahua", "persian"],
-    "gender": null,
-    "age": {"min": 1, "max": 5},
-    "status": "available",
-    "keywords": ["calme", "appartement", "tranquille"]
+  "species": [string],
+  "type": [string],
+  "gender": "male" | "female" | null,
+  "age": {
+    "min": integer | null,
+    "max": integer | null
+  },
+  "status": "available",
+  "keywords": [string]
 }
+RULES FOR NULLS AND EMPTY ARRAYS:
+- Use null ONLY when the value is unknown or not specified.
+- Use [] ONLY when no values apply.
+- DO NOT force null or empty values if information is present.
+
+NEVER omit keys. All keys must always be present in the output JSON.
+
+RESPONSE RULES:
+- Respond ONLY with JSON.
+- No explanations.
+- No markdown.
 
 Maintenant, transforme ce message :
 {$userMessage}

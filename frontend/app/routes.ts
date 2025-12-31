@@ -14,7 +14,7 @@ export default [
     route("/match-results", "routes/MatchResults.tsx"), 
     route("/login","routes/Login.tsx"),
     route("/register","routes/Register.tsx"),
-    route("/error","routes/Error.tsx"),
+   // route("/error","routes/Error.tsx"),
     route("/forgot-password","routes/forgot-password.tsx"),
     route("/reset-password","routes/Reset-password.tsx"),
 
@@ -24,4 +24,7 @@ export default [
     route("/admin/pets/:id/edit", "routes/AdminPetDetails.tsx"), 
     route("/admin/profile", "routes/AdminProfile.tsx"),
     route("/admin/dashboard", "routes/AdminDashboard.tsx"),
+    
+    // Catch-all 404
+    route("*", "routes/Error.tsx"),
   ] satisfies RouteConfig;
