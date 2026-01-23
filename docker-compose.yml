@@ -2,29 +2,12 @@ services:
   backend:
     build: ./backend
     restart: always
-    env_file: ./backend/.env
+    env_file: 
+      - .env 
+      - ./backend/.env  
     volumes:
       - storage_data:/var/www/html/storage
       - public_data:/var/www/html/public
-    environment:
-      - DB_CONNECTION=mysql
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=petmatch
-      - DB_USERNAME=root
-      - DB_PASSWORD=secret
-      - APP_KEY=base64:d+zjTI5mkrXkY2MDplavlliBZY7CPX1c144dTjqeU6M=
-      - MAIL_MAILER=smtp
-      - MAIL_HOST=smtp.gmail.com
-      - MAIL_PORT=587
-      - MAIL_USERNAME=fatimaezzahraabdessettar@gmail.com
-      - MAIL_PASSWORD=mtaptgbamnrqtkuh
-      - MAIL_ENCRYPTION=tls
-      - MAIL_FROM_ADDRESS=fatimaezzahraabdessettar@gmail.com
-      - APP_DEBUG=true
-      - APP_ENV=production
-
-      - SEED_DATABASE=true
     depends_on:
       mysql:
         condition: service_healthy
@@ -44,15 +27,13 @@ services:
   mysql:
     image: mysql:8.0
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: petmatch
+    env_file: .env
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
       - "3307:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psecret"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       timeout: 20s
       retries: 10
       interval: 5s
@@ -61,14 +42,12 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: http://localhost:8000
+        VITE_API_URL: ${VITE_API_URL}
     ports:
       - "3000:3000"
     depends_on:
       - nginx
     restart: always
-
-
 
 volumes:
   mysql_data:
