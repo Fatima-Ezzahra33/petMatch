@@ -29,7 +29,7 @@ class AuthController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'username' => $data['username']?? null,
+                'username' => $data['username'] ?? null,
                 'phone' => $data['phone'] ?? null,
                 'location' => $data['location'] ?? null,
                 'avatar' => $data['avatar'] ?? null,
@@ -37,26 +37,43 @@ class AuthController extends Controller
 
             event(new Registered($user));
 
-
             $token = $user->createToken('auth')->plainTextToken;
 
             return response()->json([
                 'message' => 'User registered successfully. Please check your email to verify your account.',
                 'user' => $user,
                 'token' => $token,
-                'email_verified' => $user->hasVerifiedEmail(), // Should be false
+                'email_verified' => $user->hasVerifiedEmail(),
             ], 201);
         } catch (ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422); // 422 Unprocessable Entity
+            $errors = $e->errors();
 
+            // Check if email already exists
+            if (isset($errors['email'])) {
+                return response()->json([
+                    'message' => 'An account with this email already exists.',
+                    'errors' => $errors
+                ], 422);
+            }
+
+            // Check if username already exists
+            if (isset($errors['username'])) {
+                return response()->json([
+                    'message' => 'This username is already taken.',
+                    'errors' => $errors
+                ], 422);
+            }
+
+            // Generic validation error
+            return response()->json([
+                'message' => 'Please check your input and try again.',
+                'errors' => $errors
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Registration failed',
+                'message' => 'Registration failed. Please try again later.',
                 'error' => $e->getMessage()
-            ], 500); // 500 Internal Server Error
+            ], 500);
         }
     }
     // verify email

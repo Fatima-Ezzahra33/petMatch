@@ -4,11 +4,11 @@ set -e
 echo "🚀 Starting Laravel application..."
 
 cat > /var/www/html/.env << EOF
-APP_NAME=Laravel
-APP_ENV=production
+APP_NAME=${APP_NAME:-Laravel}
+APP_ENV=${APP_ENV:-local}
 APP_KEY=${APP_KEY}
-APP_DEBUG=false
-APP_URL=http://localhost:8000
+APP_DEBUG=${APP_DEBUG:-true}
+APP_URL=${APP_URL:-http://localhost:8000}
 
 DB_CONNECTION=${DB_CONNECTION}
 DB_HOST=${DB_HOST}
@@ -19,12 +19,12 @@ DB_PASSWORD=${DB_PASSWORD}
 
 GROQ_API_KEY=${GROQ_API_KEY}
 
-MAIL_MAILER=smtp
-MAIL_HOST=mailpit
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
+MAIL_MAILER=${MAIL_MAILER:-smtp}
+MAIL_HOST=${MAIL_HOST:-mail-service}
+MAIL_PORT=${MAIL_PORT:-1025}
+MAIL_USERNAME=${MAIL_USERNAME:-null}
+MAIL_PASSWORD=${MAIL_PASSWORD:-null}
+MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-null}
 MAIL_FROM_ADDRESS=petMatchTeam@petmatch.test
 MAIL_FROM_NAME="PetMatch"
 
