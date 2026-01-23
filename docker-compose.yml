@@ -1,6 +1,7 @@
 services:
   backend:
     build: ./backend
+    restart: always
     env_file: ./backend/.env
     volumes:
       - storage_data:/var/www/html/storage
@@ -13,9 +14,15 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=secret
       - APP_KEY=base64:d+zjTI5mkrXkY2MDplavlliBZY7CPX1c144dTjqeU6M=
-      - MAIL_HOST=mail-service
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=fatimaezzahraabdessettar@gmail.com
+      - MAIL_PASSWORD=mtaptgbamnrqtkuh
+      - MAIL_ENCRYPTION=tls
+      - MAIL_FROM_ADDRESS=fatimaezzahraabdessettar@gmail.com
       - APP_DEBUG=true
-      - APP_ENV=local
+      - APP_ENV=production
 
       - SEED_DATABASE=true
     depends_on:
@@ -24,6 +31,7 @@ services:
 
   nginx:
     image: nginx:alpine
+    restart: always
     ports:
       - "8000:80"
     volumes:
@@ -35,6 +43,7 @@ services:
 
   mysql:
     image: mysql:8.0
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: petmatch
@@ -57,13 +66,9 @@ services:
       - "3000:3000"
     depends_on:
       - nginx
+    restart: always
 
-  mail-service:
-    image: axllent/mailpit
-    container_name: mailpit-service
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+
 
 volumes:
   mysql_data:
