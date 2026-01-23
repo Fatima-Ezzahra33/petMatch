@@ -33,13 +33,13 @@ export default function WelcomeUser() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Prevent duplicate submissions
     if (requestInProgress || isLoading) {
-      console.log('Request already in progress, ignoring duplicate submission');
+      console.log("Request already in progress, ignoring duplicate submission");
       return;
     }
-    
+
     // Validate description
     if (!description.trim()) {
       setError("Please enter a description of your ideal pet");
@@ -53,22 +53,21 @@ export default function WelcomeUser() {
     try {
       // Call the AI matching API with user_message
       const response = await petsService.matchPets(description);
-      
+
       // Navigate to results page with the matched pets
-      navigate("/match-results", { 
-        state: { 
-          pets: response.pets, 
+      navigate("/match-results", {
+        state: {
+          pets: response.pets,
           description,
           total: response.total,
-          message: response.message
-        } 
+          message: response.message,
+        },
       });
-      
     } catch (err) {
       console.error("AI matching error:", err);
       setError(
-        err instanceof Error 
-          ? err.message 
+        err instanceof Error
+          ? err.message
           : "Failed to match pets. Please try again."
       );
     } finally {
@@ -295,8 +294,12 @@ export default function WelcomeUser() {
                   )}
 
                   <motion.button
-                    whileHover={{ scale: isLoading || requestInProgress ? 1 : 1.02 }}
-                    whileTap={{ scale: isLoading || requestInProgress ? 1 : 0.98 }}
+                    whileHover={{
+                      scale: isLoading || requestInProgress ? 1 : 1.02,
+                    }}
+                    whileTap={{
+                      scale: isLoading || requestInProgress ? 1 : 0.98,
+                    }}
                     type="submit"
                     disabled={isLoading || requestInProgress}
                     className="w-full px-8 py-4 bg-[#D97F3E] text-white rounded-xl text-lg font-medium shadow-lg hover:bg-[#c17135] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -305,7 +308,11 @@ export default function WelcomeUser() {
                       <>
                         <motion.div
                           animate={{ rotate: 360 }}
-                          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1,
+                            ease: "linear",
+                          }}
                         >
                           <i className="ri-loader-4-line"></i>
                         </motion.div>
