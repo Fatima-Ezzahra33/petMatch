@@ -3,9 +3,8 @@ import { setAuthToken } from '../api/client';
 
 // IMPORTANT: This should point to your Laravel API base URL
 // The /api prefix is already in the path, so don't duplicate it
-const API_BASE = import.meta.env.DEV
-  ? "http://localhost:8000"
-  : import.meta.env.VITE_API_BASE || "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 
 const API_URL = `${API_BASE}/api`;
 

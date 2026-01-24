@@ -10,6 +10,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - petmatch-network
 
   nginx:
     image: nginx:alpine
@@ -22,6 +24,8 @@ services:
       - storage_data:/var/www/html/storage:ro
     depends_on:
       - backend
+    networks:
+      - petmatch-network
 
   mysql:
     image: mysql:8.0
@@ -36,6 +40,8 @@ services:
       timeout: 20s
       retries: 10
       interval: 5s
+    networks:
+      - petmatch-network
 
   frontend:
     build:
@@ -45,8 +51,14 @@ services:
     depends_on:
       - nginx
     restart: always
+    networks:
+      - petmatch-network
 
 volumes:
   mysql_data:
   storage_data:
   public_data:
+
+networks:
+  petmatch-network:
+    driver: bridge  
