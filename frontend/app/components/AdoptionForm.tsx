@@ -229,7 +229,7 @@ const AdoptionFormModal: React.FC<AdoptionFormModalProps> = ({
         }
       };
 
-      const response = await fetch(`http://localhost:8000/api/pets/${petId}/apply`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${petId}/apply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
