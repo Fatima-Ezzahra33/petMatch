@@ -72,8 +72,9 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
     if (imageFile) {
       submitData.append('profile_picture', imageFile);
     }
+const API_URL = import.meta.env.VITE_API_URL;
 
-    const response = await fetch('http://127.0.0.1:8000/api/admin/pets', {
+    const response = await fetch(`${API_URL}/admin/pets`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

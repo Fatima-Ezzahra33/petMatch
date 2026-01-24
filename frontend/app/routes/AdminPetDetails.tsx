@@ -43,12 +43,13 @@ const AdminPetDetails: React.FC = () => {
       fetchPet();
     }
   }, [id]);
+const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchPet = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/pets/${id}`, {
+      const response = await fetch(`${API_URL}/admin/pets/${id}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -126,7 +127,7 @@ const AdminPetDetails: React.FC = () => {
       submitData.append('profile_picture', imageFile);
     }
 
-    const response = await fetch(`http://127.0.0.1:8000/api/admin/pets/${id}`, {
+    const response = await fetch(`${API_URL}/admin/pets/${id}`, {
       method: 'POST', // Use POST with _method spoofing for file uploads
       headers: {
         'Accept': 'application/json',

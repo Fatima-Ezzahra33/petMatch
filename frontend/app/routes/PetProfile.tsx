@@ -49,7 +49,7 @@ const PetProfile: React.FC = () => {
   const toggleSidebar = () => setIsOpen(prev => !prev);
 
   const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
-  const API_URL = `http://127.0.0.1:8000/api/pets/${id}`;
+  const API_URL = `${import.meta.env.VITE_API_URL}/pets/${id}`;
 
   const isFavorite = pet ? favorites.some((fav: any) => fav.id === pet.id) : false;
 

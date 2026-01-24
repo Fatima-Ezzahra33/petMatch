@@ -61,7 +61,7 @@ const PetsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const itemsPerPage = 8;
-  const API_URL = 'http://127.0.0.1:8000/api/pets';
+const API_URL = `${import.meta.env.VITE_API_URL}/pets`; // ← Fixed!
 
   const [isOpen, setIsOpen] = useState(true);
   const toggleSidebar = () => setIsOpen(prev => !prev);
