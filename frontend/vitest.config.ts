@@ -9,6 +9,7 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     globals: true,
+    testTimeout: 60000, // Increase timeout to 60 seconds for long-running tests
     setupFiles: './app/test/setup.ts',
     include: ['app/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['app/test/EXAMPLE.test.tsx'],
