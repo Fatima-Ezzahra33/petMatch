@@ -18,6 +18,7 @@ class ShelterSeeder extends Seeder
             ['name' => 'Safe Haven Shelter', 'city' => 'Rabat', 'address' => 'Agdal', 'country' => 'Morocco', 'phone' => '0611111111', 'email' => 'safeHeaven@gmail.com'],
             ['name' => 'Furry Friends Shelter', 'city' => 'Marrakech', 'address' => 'Gueliz', 'country' => 'Morocco', 'phone' => '0622222222', 'email' => 'furry123@gmail.com'],
             ['name' => 'Paws and Claws Shelter', 'city' => 'Tangier', 'address' => 'Malabata', 'country' => 'Morocco', 'phone' => '0633333333', 'email' => 'clawsshelter11@gmail.com'],
+            ['name' => 'fatima Home Shelter', 'city' => 'Casablanca', 'address' => 'Anfa', 'country' => 'Morocco', 'phone' => '0644444444', 'email' => 'fatimaezzahraabdessettar@gmail.com'],
             ['name' => 'Forever Home Shelter', 'city' => 'Agadir', 'address' => 'Anza', 'country' => 'Morocco', 'phone' => '0644444444', 'email' => 'ForevershelterHome@gmail.com'],
         ]);
     }

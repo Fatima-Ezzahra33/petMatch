@@ -2,9 +2,8 @@ services:
   backend:
     build: ./backend
     restart: always
-    env_file: 
-      - .env 
-      - ./backend/.env  
+    env_file:
+      - .env
     volumes:
       - storage_data:/var/www/html/storage
       - public_data:/var/www/html/public

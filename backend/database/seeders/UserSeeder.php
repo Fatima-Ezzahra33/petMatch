@@ -19,9 +19,11 @@ class UserSeeder extends Seeder
             'avatar' => null,
             'location' => 'Casablanca',
             'role' => 'admin',
-            'shelter_id' => 1,  // L'admin gère le shelter #1
+            'shelter_id' => 1,
             'password' => Hash::make('password'),
+            'email_verified_at' => now(), // ✅
         ]);
+
         // Admin du shelter #2
         User::create([
             'name' => 'Shelter Admin 2',
@@ -33,6 +35,7 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'shelter_id' => 2,
             'password' => Hash::make('password'),
+            'email_verified_at' => now(), // ✅
         ]);
 
         // Admin du shelter #3
@@ -46,7 +49,9 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'shelter_id' => 3,
             'password' => Hash::make('password'),
+            'email_verified_at' => now(), // ✅
         ]);
+
         // Admin du shelter #4
         User::create([
             'name' => 'Shelter Admin 4',
@@ -58,6 +63,7 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'shelter_id' => 4,
             'password' => Hash::make('password'),
+            'email_verified_at' => now(), // ✅
         ]);
 
         // Admin du shelter #5
@@ -71,18 +77,32 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'shelter_id' => 5,
             'password' => Hash::make('password'),
+            'email_verified_at' => now(), // ✅
         ]);
 
-
+        // Admin du shelter #6
+        User::create([
+            'name' => 'Shelter Admin 6',
+            'username' => 'admin6',
+            'email' => 'fatimaezzahraabdessettar@gmail.com',
+            'phone' => '0688888888',
+            'avatar' => null,
+            'location' => 'Casablanca',
+            'role' => 'admin',
+            'shelter_id' => 6,
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(), // ✅
+        ]);
 
         // Simple user
         User::create([
-            'name' => 'test User',
+            'name' => 'Test User',
             'username' => 'user1',
             'email' => 'user@test.com',
             'phone' => '0611111111',
             'location' => 'Rabat',
             'password' => Hash::make('password'),
+            'email_verified_at' => now(), // ✅ Si tu veux qu'il soit vérifié aussi
         ]);
     }
 }
