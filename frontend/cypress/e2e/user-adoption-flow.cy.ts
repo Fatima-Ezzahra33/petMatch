@@ -348,6 +348,4 @@ it('verifies adoption request appears in requests page with pending status', () 
       cy.contains('Max').should('exist')
       cy.contains('En Attente').should('exist')
     })
-
-
 })
