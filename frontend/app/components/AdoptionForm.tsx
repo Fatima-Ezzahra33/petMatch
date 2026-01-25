@@ -317,6 +317,7 @@ const AdoptionFormModal: React.FC<AdoptionFormModalProps> = ({
           <div className="text-center mb-8 relative">
             {/* Close Button inside form */}
             <button
+              data-cy="close-modal"
               onClick={handleCloseAttempt}
               className="absolute -top-2 -right-2 p-2 rounded-full transition-colors hover:bg-black/10"
               style={{ color: subtext }}

@@ -9,7 +9,9 @@
     "typecheck": "react-router typegen && tsc",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -20,6 +22,7 @@
     "@react-router/serve": "^7.7.1",
     "@tanstack/react-query": "^5.87.1",
     "axios": "^1.11.0",
+    "cypress": "^14.5.4",
     "framer-motion": "^12.23.12",
     "isbot": "^5.1.27",
     "lucide-react": "^0.556.0",
