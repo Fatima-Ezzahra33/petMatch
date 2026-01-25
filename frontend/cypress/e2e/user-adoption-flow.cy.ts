@@ -129,4 +129,225 @@ cy.contains('button', 'Apply').click()
 cy.get('[data-cy=pets-grid] > *', { timeout: 10000 }).should('have.length', 1)
 cy.get('[data-cy=pets-grid]').contains('Bella')
  })
+
+it('visits a pet profile, adds to favorites, and verifies in favorites page', () => {
+  // 1. Setup intercepts
+  cy.intercept('POST', '**/api/login', {
+    statusCode: 200,
+    body: { token: 'fake-token', user: { id: 1, name: 'John', email: 'john@example.com' } },
+  }).as('login');
+
+  cy.intercept('GET', '**/api/me', {
+    statusCode: 200,
+    body: { user: { id: 1, name: 'John', email: 'john@example.com' } },
+  }).as('me');
+
+  cy.intercept('GET', '**/api/pets/101*', {
+    statusCode: 200,
+    body: { 
+      id: 101, 
+      name: 'Max', 
+      species: 'dog', 
+      type: 'Labrador', 
+      age: 2, 
+      gender: 'male', 
+      status: 'available', 
+      description: 'A friendly dog.',
+      profile_picture: '',
+      shelter: { id: 1, name: 'Happy Tails', city: 'Paris' } 
+    },
+  }).as('petProfile');
+
+  cy.intercept('GET', '**/api/favorites*', { statusCode: 200, body: [] }).as('favoritesEmpty');
+  cy.intercept('POST', '**/api/pets/101/favorites', { statusCode: 201, body: { message: 'added' } }).as('addFavorite');
+
+  // 2. Login
+  cy.visit('/login', { failOnStatusCode: false });
+  cy.get('[data-cy=login-email]').type('john@example.com', { force: true });
+  cy.get('[data-cy=login-password]').type('Password123', { force: true });
+  cy.get('[data-cy=login-submit]').click();
+  cy.wait(['@login', '@me']);
+
+  // 3. Visit Profile
+  cy.visit('/pet/101', { failOnStatusCode: false });
+  cy.wait('@petProfile');
+  cy.wait(1500); // Wait for initial hydration recovery
+
+  cy.get('[data-cy=pet-name]', { timeout: 20000 })
+    .should('be.visible')
+    .and('contain', 'Max');
+
+  // 4. Prepare "Populated" favorites (flat array is safer for shared components)
+  cy.intercept('GET', '**/api/favorites*', {
+    statusCode: 200,
+    body: [
+      { id: 101, name: 'Max', species: 'dog', status: 'available', description: 'Le meilleur chien', profile_picture: '' } 
+    ],
+  }).as('favoritesWithMax');
+
+  // 5. Action
+  cy.get('[data-cy=favorite-button]').should('be.enabled').click();
+  cy.wait('@addFavorite');
+
+  // 6. Navigation to Favorites
+  cy.visit('/favorites', { failOnStatusCode: false }); 
+  
+  // 7. CRITICAL: Wait for the intercept AND additional time for hydration loop to settle
+  cy.wait('@favoritesWithMax');
+  cy.wait(4000); 
+
+  // Use get -> should instead of contains to handle DOM detaching
+  cy.get('body', { timeout: 15000 })
+    .should('contain', 'Max')
+    .and('be.visible');
+});
+it('submits adoption form with validation and mocks API call', () => {
+      // Mock login
+      cy.intercept('POST', rxLogin, {
+        statusCode: 200,
+        body: { token: 'fake-token', user: { id: 1, name: 'John', email: 'john@example.com', role: 'user' } },
+      }).as('login')
+  
+      cy.intercept('GET', rxMe, {
+        statusCode: 200,
+        body: { user: { id: 1, name: 'John', email: 'john@example.com', role: 'user' } },
+      }).as('me')
+  
+      // Mock pet profile
+      cy.intercept('GET', new RegExp(`${rxHost.source}/api/pets/101(.*)?`), {
+        statusCode: 200,
+        body: {
+          id: 101,
+          name: 'Max',
+          species: 'dog',
+          type: 'Labrador',
+          age: 2,
+          gender: 'male',
+          profile_picture: '',
+          status: 'available',
+          description: 'Friendly dog',
+          shelter: { id: 1, name: 'Happy Tails', city: 'Paris' }
+        }
+      }).as('petProfile')
+
+      // Mock adoption application submission
+      cy.intercept('POST', new RegExp(`${rxHost.source}/api/pets/101/apply(.*)?`), {
+        statusCode: 200,
+        body: { message: 'Application submitted successfully' }
+      }).as('submitApplication')
+  
+      // Login first
+      cy.visit('/login')
+      cy.get('[data-cy=login-email]').type('john@example.com', { force: true })
+      cy.get('[data-cy=login-password]').type('Password123', { force: true })
+      cy.get('[data-cy=login-submit]').click()
+      cy.wait(['@login', '@me'])
+  
+      // Visit pet profile
+      cy.visit('/pet/101')
+      cy.wait('@petProfile')
+  
+      // Open adoption form
+      cy.get('[data-cy=adopt-button]').click()
+  
+      // Step 1: Fill personal information
+      cy.contains('Single').click()
+      cy.get('input[placeholder="+225 7777777777"]').type('  +212 612345678')
+      cy.get('input[placeholder="28"]').type('25')
+      cy.get('input[placeholder="Tanger Boukhalef"]').type('123 Main St')
+  
+      // Next to step 2
+      cy.contains('Next →').click()
+  
+      // Step 2: Housing information
+      cy.contains('Do you have any pets?').parent().contains('No').click() 
+      cy.get('select').select('HOUSE') 
+      cy.contains('Do you own or rent your home?').parent().contains('Own').click()
+      cy.contains('Do you have a yard?').parent().contains('Yes').click()
+
+  
+      // Next to step 3
+      cy.contains('Next →').click()
+  
+      // Step 3: Request details
+      cy.get('textarea[placeholder="I\'m looking for a companion..."]').type('I want a companion for my family')
+
+      // Be more specific with the checkbox to avoid checking "concerns" by mistake
+      cy.contains('I have read and agree to the terms').parent().find('input[type="checkbox"]').check()
+        
+      // Submit form
+      cy.contains('Send Request').click()
+  
+      // Confirm submission
+      cy.contains('Confirm & Submit').click()
+  
+      // Wait for API call
+      cy.wait('@submitApplication')
+  
+      // Verify success message
+      cy.contains('Your adoption request for Max has been submitted successfully').should('exist')
+    })
+  
+it('verifies adoption request appears in requests page with pending status', () => {
+      // Mock login
+      cy.intercept('POST', rxLogin, {
+        statusCode: 200,
+        body: { token: 'fake-token', user: { id: 1, name: 'John', email: 'john@example.com', role: 'user' } },
+      }).as('login')
+  
+      cy.intercept('GET', rxMe, {
+        statusCode: 200,
+        body: { user: { id: 1, name: 'John', email: 'john@example.com', role: 'user' } },
+      }).as('me')
+  
+      // Mock adoption requests
+      cy.intercept('GET', new RegExp(`${rxHost.source}/api/adoptions(.*)?`), {
+        statusCode: 200,
+        body: [
+          {
+            id: 1,
+            pet_id: 101,
+            status: 'pending',
+            created_at: new Date().toISOString(),
+            form_data: {}
+          }
+        ]
+      }).as('adoptions')
+
+      // Mock pet details for the request
+      cy.intercept('GET', new RegExp(`${rxHost.source}/api/pets/101(.*)?`), {
+        statusCode: 200,
+        body: {
+          id: 101,
+          name: 'Max',
+          species: 'dog',
+          type: 'Labrador',
+          age: 2,
+          gender: 'male',
+          profile_picture: '',
+          status: 'available',
+          description: 'Friendly dog',
+          shelter: { id: 1, name: 'Happy Tails', city: 'Paris' }
+        }
+      }).as('petDetails')
+  
+      // Login first
+      cy.visit('/login')
+      cy.get('[data-cy=login-email]').type('john@example.com', { force: true })
+      cy.get('[data-cy=login-password]').type('Password123', { force: true })
+      cy.get('[data-cy=login-submit]').click()
+      cy.wait(['@login', '@me'])
+  
+      // Visit requests page
+      cy.visit('/requests')
+      cy.wait(['@adoptions', '@petDetails'])
+  
+      // Verify table exists and contains the request
+      cy.get('[data-cy=requests-table]').should('exist')
+      cy.contains('#1').should('exist')
+      cy.contains('Max').should('exist')
+      cy.contains('En Attente').should('exist')
+    })
+
+
 })

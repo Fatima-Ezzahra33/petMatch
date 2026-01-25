@@ -8,16 +8,9 @@ beforeEach(() => {
 })
 
 // Ignore SSR hydration mismatches during E2E to prevent hard failures
-Cypress.on('uncaught:exception', (err) => {
-  if (err?.message?.includes('Hydration failed')) {
-    return false
-  }
-  return false
-})
 
-Cypress.on('uncaught:exception', (err, runnable) => {
-  // On ignore l'erreur d'hydratation de React/Remix
-  if (err.message.includes('Hydration failed') || err.message.includes('minified React error')) {
-    return false
+Cypress.on('uncaught:exception', (err) => {
+  if (err.message.includes('Hydration failed') || err.message.includes('minified React error #418')) {
+    return false;
   }
-})
+});

@@ -9,6 +9,9 @@ export default defineConfig({
       // implement node event listeners here
       return config
     },
+    env: {
+      REACT_ROUTER_SSR_ENABLED: false,
+    },
   },
   video: false,
   viewportWidth: 1280,
