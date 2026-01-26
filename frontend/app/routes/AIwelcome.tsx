@@ -212,6 +212,7 @@ export default function WelcomeUser() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="relative">
                     <textarea
+                      data-cy="ai-search-textarea"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="ex : I want a dog, that is pet friendly and not aggressive, ideally it would be nice if its a female ..."
@@ -295,6 +296,7 @@ export default function WelcomeUser() {
                   )}
 
                   <motion.button
+                    data-cy="ai-search-submit"
                     whileHover={{ scale: isLoading || requestInProgress ? 1 : 1.02 }}
                     whileTap={{ scale: isLoading || requestInProgress ? 1 : 0.98 }}
                     type="submit"

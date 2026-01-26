@@ -81,7 +81,7 @@ export default function MatchResults() {
       >
         <div className="container mx-auto px-6">
           {/* Header */}
-          <div className="text-center mb-12">
+          <div data-cy="match-results-header" className="text-center mb-12">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}

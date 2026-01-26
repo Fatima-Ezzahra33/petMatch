@@ -44,7 +44,7 @@ export default function PetCardAI({ props }: PetCardAIProps) {
       >
         {/* Match Score Badge - Top Left */}
         {props.score !== undefined && props.score > 0 && (
-          <div className="absolute top-4 left-4 z-20">
+          <div data-cy="pet-match-score" className="absolute top-4 left-4 z-20">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
