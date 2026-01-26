@@ -6,11 +6,12 @@ const adminRxMe = new RegExp(`${adminRxHost.source}\/api\/me(.*)?`);
 const rxAdminStats = new RegExp(`${adminRxHost.source}\/api\/admin\/pets\/dashboard\/stats(.*)?`);
 const rxAdminActivity = new RegExp(`${adminRxHost.source}\/api\/admin\/pets\/dashboard\/activity(.*)?`);
 const rxAdminPets = new RegExp(`${adminRxHost.source}\/api\/admin\/pets(.*)?`);
+const rxAdminRequests = new RegExp(`${adminRxHost.source}\/api\/admin\/adoption-applications(.*)?`);
+const rxAdminUpdateStatus = new RegExp(`${adminRxHost.source}\/api\/admin\/adoption-applications\/\\d+\/status(.*)?`);
 
 describe('Admin Workflow', () => {
   beforeEach(() => {
     cy.clearLocalStorage()
-    // Ignore hydration errors caused by the <style> tag in AdminDashboard
     Cypress.on('uncaught:exception', (err) => {
       if (err.message.includes('Hydration failed') || err.message.includes('server rendered HTML')) {
         return false
@@ -109,18 +110,17 @@ describe('Admin Workflow', () => {
     cy.contains('Buddy').should('be.visible')
   })
 
-  it('adds a new pet via modal with image upload', () => {
-    cy.intercept('POST', adminRxLogin, {
+  it('navigates to admin requests page and displays adoption applications', () => {
+    cy.intercept('POST', adminRxLogin, { statusCode: 200, body: { token: 'f', user: { id: 1, role: 'admin' } } }).as('adminLogin')
+    cy.intercept('GET', adminRxMe, { statusCode: 200, body: { user: { id: 1, role: 'admin' } } }).as('adminMe')
+    
+    cy.intercept('GET', rxAdminRequests, {
       statusCode: 200,
-      body: { token: 'fake-token', user: { id: 1, role: 'admin' } },
-    }).as('adminLogin')
-
-    cy.intercept('GET', adminRxMe, {
-      statusCode: 200,
-      body: { user: { id: 1, role: 'admin' } },
-    }).as('adminMe')
-
-    cy.intercept('GET', rxAdminPets, { statusCode: 200, body: [] }).as('adminPets')
+      body: [
+        { id: 1, user_id: 2, pet_id: 1, status: 'pending', created_at: new Date().toISOString(), user: { name: 'John Doe' }, pet: { name: 'Buddy', species: 'dog' } },
+        { id: 2, user_id: 3, pet_id: 2, status: 'approved', created_at: new Date().toISOString(), user: { name: 'Jane Smith' }, pet: { name: 'Whiskers', species: 'cat' } }
+      ]
+    }).as('adminRequests')
 
     cy.visit('/login')
     cy.get('[data-cy=login-email]').type('admin@example.com', { force: true })
@@ -128,39 +128,93 @@ describe('Admin Workflow', () => {
     cy.get('[data-cy=login-submit]').click()
     cy.wait(['@adminLogin', '@adminMe'])
 
-    cy.visit('/admin/pets')
-    cy.wait('@adminPets')
+    cy.visit('/admin/requests')
+    cy.wait('@adminRequests')
+    
+    cy.get('[data-cy=admin-requests-header]').should('be.visible')
+    cy.get('[data-cy=admin-request-row-1]').should('contain', 'Buddy')
+    
+    // Test filter
+    cy.get('[data-cy=admin-requests-search]').type('Whiskers')
+    cy.get('[data-cy=admin-request-row-2]').should('be.visible')
+    cy.get('[data-cy=admin-request-row-1]').should('not.exist')
+  })
 
-    cy.get('[data-cy=add-pet-button]').click()
+  it('approves an adoption request and verifies status updates', () => {
+    cy.intercept('POST', adminRxLogin, { statusCode: 200, body: { token: 'f', user: { id: 1, role: 'admin' } } }).as('adminLogin')
+    cy.intercept('GET', adminRxMe, { statusCode: 200, body: { user: { id: 1, role: 'admin' } } }).as('adminMe')
+    
+    cy.intercept('GET', rxAdminRequests, {
+      statusCode: 200,
+      body: [{ id: 1, user_id: 2, pet_id: 1, status: 'pending', created_at: new Date().toISOString(), user: { name: 'John Doe' }, pet: { name: 'Buddy' } }]
+    }).as('adminRequests')
 
-    cy.intercept('POST', rxAdminPets, { 
-      statusCode: 200, 
-      body: { id: 3, name: 'Max', species: 'dog', status: 'available' } 
-    }).as('createPet')
+    // Mock the PUT request - MUST return a body to avoid JSON parsing errors
+    cy.intercept('PUT', rxAdminUpdateStatus, {
+      statusCode: 200,
+      body: { message: 'Status updated' }
+    }).as('updateStatus')
 
-    cy.intercept('GET', rxAdminPets, { 
-      statusCode: 200, 
-      body: [{ id: 3, name: 'Max', species: 'dog', status: 'available' }] 
-    }).as('adminPetsUpdated')
+    cy.visit('/login')
+    cy.get('[data-cy=login-email]').type('admin@example.com', { force: true })
+    cy.get('[data-cy=login-password]').type('AdminPass123', { force: true })
+    cy.get('[data-cy=login-submit]').click()
+    cy.wait(['@adminLogin', '@adminMe'])
 
-    cy.get('[data-cy=pet-name]').type('Max')
-    cy.get('[data-cy=pet-species]').type('dog')
-    cy.get('[data-cy=pet-type]').type('Golden Retriever')
-    cy.get('[data-cy=pet-age]').type('3')
-    cy.get('[data-cy=pet-gender]').select('male')
-    cy.get('[data-cy=pet-status]').select('available')
-    cy.get('[data-cy=pet-description]').type('Very friendly dog')
+    cy.visit('/admin/requests')
+    cy.wait('@adminRequests')
 
-    // FIX: Generate dummy file instead of using cy.fixture()
-    cy.get('[data-cy=pet-image-upload]').selectFile({
-      contents: Cypress.Buffer.from('dummy image data'),
-      fileName: 'pet.jpg',
-      mimeType: 'image/jpeg'
-    }, { force: true })
+    // Open options and details
+    cy.get('[data-cy=admin-request-row-1]').find('button').contains('⋮').click()
+    cy.contains('View Details').click()
 
-    cy.get('[data-cy=create-pet-submit]').click()
-    cy.wait(['@createPet', '@adminPetsUpdated'])
+    // Perform Approval
+    cy.get('[data-cy=admin-approve-application-btn]').click()
+    cy.get('[data-cy=admin-action-confirm-btn-approve]').click()
 
-    cy.contains('Max').should('be.visible')
+    // Wait for the API call to complete
+    cy.wait('@updateStatus')
+
+    // Verify UI updates (component updates state manually, so we don't wait for a GET refresh)
+    cy.contains('Application approved successfully!').should('be.visible')
+    cy.get('[data-cy=admin-request-row-1]').should('contain', 'Approved')
+  })
+
+  it('denies an adoption request and verifies status updates', () => {
+    cy.intercept('POST', adminRxLogin, { statusCode: 200, body: { token: 'f', user: { id: 1, role: 'admin' } } }).as('adminLogin')
+    cy.intercept('GET', adminRxMe, { statusCode: 200, body: { user: { id: 1, role: 'admin' } } }).as('adminMe')
+    
+    cy.intercept('GET', rxAdminRequests, {
+      statusCode: 200,
+      body: [{ id: 1, user_id: 2, pet_id: 1, status: 'pending', created_at: new Date().toISOString(), user: { name: 'John Doe' }, pet: { name: 'Buddy' } }]
+    }).as('adminRequests')
+
+    // FIX: Provide a body {} to satisfy the frontend's .json() call
+    cy.intercept('PUT', rxAdminUpdateStatus, {
+      statusCode: 200,
+      body: { message: 'Denied' } 
+    }).as('updateStatus')
+
+    cy.visit('/login')
+    cy.get('[data-cy=login-email]').type('admin@example.com', { force: true })
+    cy.get('[data-cy=login-password]').type('AdminPass123', { force: true })
+    cy.get('[data-cy=login-submit]').click()
+    cy.wait(['@adminLogin', '@adminMe'])
+
+    cy.visit('/admin/requests')
+    cy.wait('@adminRequests')
+
+    cy.get('[data-cy=admin-request-row-1]').find('button').contains('⋮').click()
+    cy.contains('View Details').click()
+
+    // Perform Denial
+    cy.get('[data-cy=admin-deny-application-btn]').click()
+    cy.get('[data-cy=admin-action-confirm-btn-deny]').click()
+
+    cy.wait('@updateStatus')
+
+    // Verify UI updates
+    cy.contains('Application denied successfully!').should('be.visible')
+    cy.get('[data-cy=admin-request-row-1]').should('contain', 'Denied')
   })
 })

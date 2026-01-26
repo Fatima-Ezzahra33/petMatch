@@ -215,7 +215,7 @@ const AdminRequests: React.FC = () => {
           )}
 
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-8" data-cy="admin-requests-header">
             <h1
               className="text-3xl font-bold mb-2 duration-300"
               style={{ color: isDarkMode ? "#F5F3ED" : "#8B6F47" }}
@@ -256,6 +256,7 @@ const AdminRequests: React.FC = () => {
                     color: isDarkMode ? "#F7F5EA" : "#1f2937",
                     backgroundColor: isDarkMode ? "rgba(115, 101, 91, 0.2)" : "white"
                   }}
+                  data-cy="admin-requests-search"
                 />
               </div>
             </div>
@@ -366,6 +367,7 @@ const AdminRequests: React.FC = () => {
                           whileHover={{
                             backgroundColor: isDarkMode ? 'rgba(115, 101, 91, 0.15)' : 'rgba(0,0,0,0.02)'
                           }}
+                          data-cy={`admin-request-row-${application.id}`}
                         >
                           <td
                             className="py-4 px-4 text-sm duration-300"
@@ -590,7 +592,7 @@ const AdminRequests: React.FC = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-6" data-cy="admin-request-details-modal">
               {/* Basic Info */}
               <div>
                 <h3
@@ -606,25 +608,25 @@ const AdminRequests: React.FC = () => {
                   <div className="flex justify-between">
                     <span style={{ color: isDarkMode ? "#D9915B" : "#666" }}>Applicant:</span>
                     <span style={{ color: isDarkMode ? "#F7F5EA" : "#1f2937" }} className="font-medium">
-                      {selectedApplication.user.name}
+                      {selectedApplication?.user?.name || 'Unknown'}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span style={{ color: isDarkMode ? "#D9915B" : "#666" }}>Email:</span>
                     <span style={{ color: isDarkMode ? "#F7F5EA" : "#1f2937" }}>
-                      {selectedApplication.user.email}
+                      {selectedApplication?.user?.email || 'No email'}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span style={{ color: isDarkMode ? "#D9915B" : "#666" }}>Pet:</span>
                     <span style={{ color: isDarkMode ? "#F7F5EA" : "#1f2937" }} className="font-medium">
-                      {selectedApplication.pet.name} ({capitalizeFirst(selectedApplication.pet.species)})
+                      {selectedApplication?.pet?.name || 'Unknown'} ({capitalizeFirst(selectedApplication?.pet?.species) || 'Unknown'})
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span style={{ color: isDarkMode ? "#D9915B" : "#666" }}>Submitted:</span>
                     <span style={{ color: isDarkMode ? "#F7F5EA" : "#1f2937" }}>
-                      {formatDate(selectedApplication.created_at)}
+                      {selectedApplication ? formatDate(selectedApplication.created_at) : 'Unknown'}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -632,18 +634,18 @@ const AdminRequests: React.FC = () => {
                     <span
                       className="px-3 py-1 rounded-full text-xs font-medium"
                       style={{
-                        backgroundColor: getStatusStyle(selectedApplication.status).bg,
-                        color: getStatusStyle(selectedApplication.status).text
+                        backgroundColor: selectedApplication ? getStatusStyle(selectedApplication.status).bg : 'transparent',
+                        color: selectedApplication ? getStatusStyle(selectedApplication.status).text : '#6b7280'
                       }}
                     >
-                      {getStatusStyle(selectedApplication.status).label}
+                      {selectedApplication ? getStatusStyle(selectedApplication.status).label : 'Unknown'}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Form Data */}
-              {selectedApplication.form_data && Object.keys(selectedApplication.form_data).length > 0 && (
+              {selectedApplication?.form_data && Object.keys(selectedApplication.form_data).length > 0 && (
                 <div>
                   <h3
                     className="text-lg font-semibold mb-3"
@@ -676,10 +678,10 @@ const AdminRequests: React.FC = () => {
               )}
 
               {/* Action Buttons */}
-              {selectedApplication.status === 'pending' && (
+              {selectedApplication?.status === 'pending' && (
                 <div className="flex gap-3 pt-4">
                   <button
-                    onClick={() => handleApprove(selectedApplication)}
+                    onClick={() => selectedApplication && handleApprove(selectedApplication)}
                     className="flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
                     style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
                     onMouseEnter={(e) => {
@@ -688,12 +690,13 @@ const AdminRequests: React.FC = () => {
                     onMouseLeave={(e) => {
                       e.currentTarget.style.backgroundColor = "#10B981";
                     }}
+                    data-cy="admin-approve-application-btn"
                   >
                     <FontAwesomeIcon icon={faCheck} />
                     Approve Application
                   </button>
                   <button
-                    onClick={() => handleDeny(selectedApplication)}
+                    onClick={() => selectedApplication && handleDeny(selectedApplication)}
                     className="flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
                     style={{ backgroundColor: "#EF4444", color: "#FFFFFF" }}
                     onMouseEnter={(e) => {
@@ -702,6 +705,7 @@ const AdminRequests: React.FC = () => {
                     onMouseLeave={(e) => {
                       e.currentTarget.style.backgroundColor = "#EF4444";
                     }}
+                    data-cy="admin-deny-application-btn"
                   >
                     <FontAwesomeIcon icon={faXmark} />
                     Deny Application
@@ -709,7 +713,7 @@ const AdminRequests: React.FC = () => {
                 </div>
               )}
 
-              {selectedApplication.status !== 'pending' && (
+              {selectedApplication?.status !== 'pending' && (
                 <div
                   className="text-center text-sm italic p-4"
                   style={{ color: isDarkMode ? "#D9915B" : "#9ca3af" }}
@@ -817,7 +821,7 @@ const AdminRequests: React.FC = () => {
                 <button
                   onClick={() => setShowActionModal(false)}
                   className="flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-300"
-                  style={{ 
+                  style={{
                     border: `1px solid ${isDarkMode ? "#73655B" : "#d1d5db"}`,
                     color: isDarkMode ? "#F7F5EA" : "#4b5563",
                     backgroundColor: "transparent"
@@ -828,13 +832,14 @@ const AdminRequests: React.FC = () => {
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";
                   }}
+                  data-cy="admin-action-cancel-btn"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmAction}
                   className="flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
-                  style={{ 
+                  style={{
                     backgroundColor: pendingAction.type === 'approve' ? "#10B981" : "#EF4444",
                     color: "#FFFFFF"
                   }}
@@ -844,6 +849,7 @@ const AdminRequests: React.FC = () => {
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = pendingAction.type === 'approve' ? "#10B981" : "#EF4444";
                   }}
+                  data-cy={`admin-action-confirm-btn-${pendingAction.type}`}
                 >
                   <FontAwesomeIcon icon={pendingAction.type === 'approve' ? faCheck : faXmark} />
                   {pendingAction.type === 'approve' ? 'Approve' : 'Deny'}
