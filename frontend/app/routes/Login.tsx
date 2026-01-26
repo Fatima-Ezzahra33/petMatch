@@ -312,6 +312,7 @@ export default function Login() {
 
                 {error && (
                   <div
+                    data-cy="login-error"
                     className="px-4 py-3 rounded-lg"
                     style={{
                       backgroundColor: isDarkMode ? "rgba(239, 68, 68, 0.1)" : "#fef2f2",

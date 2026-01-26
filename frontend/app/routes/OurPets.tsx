@@ -91,7 +91,7 @@ export default function OurPets() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="text-btnPrimary font-bold text-3xl font-playfair">
+        <div data-cy="network-error-message" className="text-btnPrimary font-bold text-3xl font-playfair">
           Error loading pets...
         </div>
       </motion.div>

@@ -230,6 +230,7 @@ export default function Register() {
               <form onSubmit={handleSubmit} className="space-y-6" data-cy="register-form">
             {error && (
               <div
+                data-cy="register-error"
                 className="px-4 py-3 rounded-lg"
                 style={{
                   backgroundColor: isDarkMode ? 'rgba(239, 68, 68, 0.1)' : '#fef2f2',

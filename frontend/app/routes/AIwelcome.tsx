@@ -286,6 +286,7 @@ export default function WelcomeUser() {
                   {/* Error message */}
                   {error && (
                     <motion.div
+                      data-cy="degraded-mode-message"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="flex items-center justify-center gap-2 text-sm text-red-500"
