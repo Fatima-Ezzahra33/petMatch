@@ -204,6 +204,7 @@ const PetProfile: React.FC = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-10">
                   <div>
                     <h1
+                      data-cy="pet-name"
                       className={`text-4xl md:text-5xl font-bold ${
                         isDarkMode ? 'text-[#F5F3ED]' : 'text-[#333]'
                       }`}
@@ -216,6 +217,7 @@ const PetProfile: React.FC = () => {
                   </div>
 
                   <button
+                    data-cy="favorite-button"
                     onClick={handleToggleFavorite}
                     className={`p-4 rounded-2xl transition-all ${
                       isDarkMode
@@ -270,7 +272,8 @@ const PetProfile: React.FC = () => {
                       </p>
                     </Section>
 
-                    <button 
+                    <button
+                      data-cy="adopt-button"
                       onClick={() => setIsAdoptionModalOpen(true)}
                       className="w-full py-5 bg-gradient-to-r from-[#D29059] to-[#c57a45] text-white text-xl font-bold rounded-2xl hover:scale-105 transition"
                     >

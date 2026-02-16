@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '../components/AuthenticatedLayout';
 import { useTheme } from '../contexts/themeContext';
@@ -178,9 +180,10 @@ const AdminDashboard = () => {
         }
       `}</style>
 
-      <div 
-        className="px-8 pb-8 min-h-screen" 
+      <div
+        className="px-8 pb-8 min-h-screen"
         style={{ backgroundColor: isDarkMode ? "#36332E" : "#F7F5EA" }}
+        data-cy="admin-dashboard"
       >
         {/* Header */}
         <div className={`mb-8 pt-8 ${animateIn ? 'animate-fade' : 'opacity-0'}`}>
@@ -384,21 +387,21 @@ const AdminDashboard = () => {
 };
 
 // Stat Card Component with Progress Ring
-const StatCard = ({ 
-  title, 
-  value, 
-  total, 
-  icon, 
-  delay, 
-  animateIn, 
+const StatCard = ({
+  title,
+  value,
+  total,
+  icon,
+  delay,
+  animateIn,
   isDarkMode,
-  color 
-}: { 
-  title: string; 
-  value: number; 
-  total: number; 
-  icon: string; 
-  delay: string; 
+  color
+}: {
+  title: string;
+  value: number;
+  total: number;
+  icon: string;
+  delay: string;
   animateIn: boolean;
   isDarkMode: boolean;
   color: string;
@@ -408,13 +411,16 @@ const StatCard = ({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
+  const dataCy = `stat-${title.toLowerCase().replace(' ', '-')}`;
+
   return (
-    <div 
+    <div
       className={`stat-card p-6 rounded-2xl shadow-lg ${animateIn ? 'animate-scale' : 'opacity-0'}`}
-      style={{ 
+      style={{
         backgroundColor: isDarkMode ? "#2A2724" : "#FFFFFF",
         animationDelay: delay
       }}
+      data-cy={dataCy}
     >
       <div className="flex items-center justify-between mb-4">
         <span className="text-4xl">{icon}</span>
@@ -441,19 +447,19 @@ const StatCard = ({
           />
         </svg>
       </div>
-      <h3 
+      <h3
         className="text-sm font-semibold mb-2 uppercase tracking-wide"
         style={{ color: isDarkMode ? "#F7F5EA" : "#6B5B4A" }}
       >
         {title}
       </h3>
-      <p 
+      <p
         className="text-4xl font-bold"
         style={{ color: isDarkMode ? "#F5F3ED" : "#8B6F47" }}
       >
         {value}
       </p>
-      <p 
+      <p
         className="text-sm mt-2"
         style={{ color: isDarkMode ? "#F7F5EA" : "#6B5B4A" }}
       >

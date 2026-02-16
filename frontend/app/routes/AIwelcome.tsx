@@ -211,6 +211,7 @@ export default function WelcomeUser() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="relative">
                     <textarea
+                      data-cy="ai-search-textarea"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="ex : I want a dog, that is pet friendly and not aggressive, ideally it would be nice if its a female ..."
@@ -284,6 +285,7 @@ export default function WelcomeUser() {
                   {/* Error message */}
                   {error && (
                     <motion.div
+                      data-cy="degraded-mode-message"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="flex items-center justify-center gap-2 text-sm text-red-500"
@@ -294,12 +296,9 @@ export default function WelcomeUser() {
                   )}
 
                   <motion.button
-                    whileHover={{
-                      scale: isLoading || requestInProgress ? 1 : 1.02,
-                    }}
-                    whileTap={{
-                      scale: isLoading || requestInProgress ? 1 : 0.98,
-                    }}
+                    data-cy="ai-search-submit"
+                    whileHover={{ scale: isLoading || requestInProgress ? 1 : 1.02 }}
+                    whileTap={{ scale: isLoading || requestInProgress ? 1 : 0.98 }}
                     type="submit"
                     disabled={isLoading || requestInProgress}
                     className="w-full px-8 py-4 bg-[#D97F3E] text-white rounded-xl text-lg font-medium shadow-lg hover:bg-[#c17135] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"

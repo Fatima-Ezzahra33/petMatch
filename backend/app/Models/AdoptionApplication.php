@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class AdoptionApplication extends Model
 {
+    use HasFactory;
     protected $fillable = ['user_id','pet_id','form_data','reviewed_by','status'];
 
     protected $casts = [

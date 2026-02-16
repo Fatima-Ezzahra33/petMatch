@@ -227,9 +227,10 @@ export default function Register() {
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6" data-cy="register-form">
             {error && (
               <div
+                data-cy="register-error"
                 className="px-4 py-3 rounded-lg"
                 style={{
                   backgroundColor: isDarkMode ? 'rgba(239, 68, 68, 0.1)' : '#fef2f2',
@@ -249,6 +250,7 @@ export default function Register() {
                 username
               </label>
               <input
+                data-cy="register-name"
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -272,6 +274,7 @@ export default function Register() {
                 Email
               </label>
               <input
+                data-cy="register-email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -296,6 +299,7 @@ export default function Register() {
               </label>
               <div className="relative">
                 <input
+                  data-cy="register-password"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -330,6 +334,7 @@ export default function Register() {
               </label>
               <div className="relative">
                 <input
+                  data-cy="register-password-confirm"
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.password_confirmation}
                   onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })}
@@ -357,6 +362,7 @@ export default function Register() {
 
             <div className="flex items-center gap-2">
               <input
+                data-cy="register-accept-terms"
                 type="checkbox"
                 id="terms"
                 checked={acceptTerms}
@@ -377,6 +383,7 @@ export default function Register() {
             </div>
 
             <button
+              data-cy="register-submit"
               type="submit"
               disabled={loading}
               className="w-full font-semibold py-3 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"

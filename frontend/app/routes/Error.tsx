@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useTheme } from '~/contexts/themeContext';
 
 // This loader throws a 404 response for any unmatched routes
-export function loader() {
+export function clientLoader() {
   throw new Response("Not Found", { 
     status: 404, 
     statusText: "Not Found" 

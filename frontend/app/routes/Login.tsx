@@ -287,7 +287,7 @@ export default function Login() {
                 />
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6" data-cy="login-form">
                 {successMessage && (
                   <div
                     className="px-4 py-3 rounded-lg"
@@ -312,6 +312,7 @@ export default function Login() {
 
                 {error && (
                   <div
+                    data-cy="login-error"
                     className="px-4 py-3 rounded-lg"
                     style={{
                       backgroundColor: isDarkMode ? "rgba(239, 68, 68, 0.1)" : "#fef2f2",
@@ -331,6 +332,7 @@ export default function Login() {
                     Email
                   </label>
                   <input
+                    data-cy="login-email"
                     type="email"
                     value={formData.email}
                     onChange={(e) =>
@@ -351,6 +353,7 @@ export default function Login() {
                   </label>
                   <div className="relative">
                     <input
+                      data-cy="login-password"
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={(e) =>
@@ -406,6 +409,7 @@ export default function Login() {
                 </div>
 
                 <button
+                  data-cy="login-submit"
                   type="submit"
                   disabled={loading}
                   className="w-full font-semibold py-3 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-BgLight cursor-pointer"

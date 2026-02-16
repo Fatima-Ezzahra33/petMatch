@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class Pet extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'name','species','type','age','description','profile_picture',
         'shelter_id','added_by','adopted_by','gender','status'

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { petsService } from "../api/petsService";
@@ -316,6 +318,7 @@ const AdminPets: React.FC = () => {
       <div
         className="min-h-screen duration-300"
         style={{ backgroundColor: isDarkMode ? "#36332E" : "#F7F5EA" }}
+        data-cy="admin-pets"
       >
         <div className="px-4 md:px-6 lg:px-8 py-8">
           <div className="max-w-[1920px] mx-auto">
@@ -391,6 +394,7 @@ const AdminPets: React.FC = () => {
                       : "#D29059";
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
+                  data-cy="add-pet-button"
                 >
                   <FontAwesomeIcon icon={faPlus} />
                   Add New Pet
@@ -402,7 +406,7 @@ const AdminPets: React.FC = () => {
             <div>
               {pets.length > 0 ? (
                 <>
-                  <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-8">
+                  <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-8" data-cy="pets-list">
                     {currentPets.map((pet) => (
                       <AdminPetCard
                         key={pet.id}

@@ -12,10 +12,12 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libpng-dev \
     libwebp-dev \
+    libsqlite3-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install \
         pdo \
         pdo_mysql \
+        pdo_sqlite \
         zip \
         intl \
         gd \
@@ -45,9 +47,11 @@ RUN apt-get update && apt-get install -y \
     libpng16-16t64 \
     libwebp7 \
     libfreetype6 \
+    libsqlite3-dev \
     && docker-php-ext-install \
         pdo \
         pdo_mysql \
+        pdo_sqlite \
         zip \
         intl \
         opcache \

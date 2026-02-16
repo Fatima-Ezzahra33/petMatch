@@ -202,7 +202,7 @@ export default function Requests() {
 
             {/* Table */}
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" data-cy="requests-table">
                 <thead>
                   <tr
                     className="border-b duration-300"

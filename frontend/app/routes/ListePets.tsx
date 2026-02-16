@@ -61,7 +61,8 @@ const PetsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const itemsPerPage = 8;
-  const API_URL = 'http://127.0.0.1:8000/api/pets';
+  const API_BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? 'http://localhost:8000' : 'http://localhost:8000');
+  const API_URL = `${API_BASE}/api/pets`;
 
   const [isOpen, setIsOpen] = useState(true);
   const toggleSidebar = () => setIsOpen(prev => !prev);
@@ -268,7 +269,7 @@ const PetsPage: React.FC = () => {
                   {filteredPets.length > 0 ? (
                     <>
                       {/* Pet Grid */}
-                      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      <div data-cy="pets-grid" className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {currentPets.map(pet => (
                           <PetCard key={pet.id} props={adaptPetForCard(pet)} />
                         ))}

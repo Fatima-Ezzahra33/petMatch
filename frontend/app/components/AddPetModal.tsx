@@ -219,6 +219,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                 accept="image/*"
                 onChange={handleImageChange}
                 className="hidden"
+                data-cy="pet-image-upload"
               />
               
               {imagePreview ? (
@@ -274,13 +275,14 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2"
-                style={{ 
+                style={{
                   backgroundColor: isDarkMode ? "#36332E" : "#FFFFFF",
                   color: isDarkMode ? "#F7F5EA" : "#333",
                   borderColor: isDarkMode ? "#73655B" : "#d1d5db"
                 }}
                 required
                 disabled={loading}
+                data-cy="pet-name"
               />
             </div>
 
@@ -298,12 +300,13 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                 onChange={(e) => setFormData({ ...formData, species: e.target.value })}
                 placeholder="e.g., Dog, Cat"
                 className="w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2"
-                style={{ 
+                style={{
                   backgroundColor: isDarkMode ? "#36332E" : "#FFFFFF",
                   color: isDarkMode ? "#F7F5EA" : "#333",
                   borderColor: isDarkMode ? "#73655B" : "#d1d5db"
                 }}
                 disabled={loading}
+                data-cy="pet-species"
               />
             </div>
 
@@ -321,12 +324,13 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                 placeholder="e.g., Labrador, Persian"
                 className="w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2"
-                style={{ 
+                style={{
                   backgroundColor: isDarkMode ? "#36332E" : "#FFFFFF",
                   color: isDarkMode ? "#F7F5EA" : "#333",
                   borderColor: isDarkMode ? "#73655B" : "#d1d5db"
                 }}
                 disabled={loading}
+                data-cy="pet-type"
               />
             </div>
 
@@ -345,12 +349,13 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                 value={formData.age}
                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                 className="w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2"
-                style={{ 
+                style={{
                   backgroundColor: isDarkMode ? "#36332E" : "#FFFFFF",
                   color: isDarkMode ? "#F7F5EA" : "#333",
                   borderColor: isDarkMode ? "#73655B" : "#d1d5db"
                 }}
                 disabled={loading}
+                data-cy="pet-age"
               />
             </div>
 
@@ -366,13 +371,14 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                 className="w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2"
-                style={{ 
+                style={{
                   backgroundColor: isDarkMode ? "#36332E" : "#FFFFFF",
                   color: isDarkMode ? "#F7F5EA" : "#333",
                   borderColor: isDarkMode ? "#73655B" : "#d1d5db"
                 }}
                 required
                 disabled={loading}
+                data-cy="pet-gender"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -391,13 +397,14 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2"
-                style={{ 
+                style={{
                   backgroundColor: isDarkMode ? "#36332E" : "#FFFFFF",
                   color: isDarkMode ? "#F7F5EA" : "#333",
                   borderColor: isDarkMode ? "#73655B" : "#d1d5db"
                 }}
                 required
                 disabled={loading}
+                data-cy="pet-status"
               >
                 <option value="available">Available</option>
                 <option value="adopted">Adopted</option>
@@ -419,7 +426,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={4}
               className="w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2 resize-none"
-              style={{ 
+              style={{
                 backgroundColor: isDarkMode ? "#36332E" : "#FFFFFF",
                 color: isDarkMode ? "#F7F5EA" : "#333",
                 borderColor: isDarkMode ? "#73655B" : "#d1d5db"
@@ -427,6 +434,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
               placeholder="Tell us about this pet..."
               required
               disabled={loading}
+              data-cy="pet-description"
             />
           </div>
 
@@ -436,7 +444,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
               type="submit"
               disabled={loading}
               className="flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              style={{ 
+              style={{
                 backgroundColor: isDarkMode ? "#D9915B" : "#D29059",
                 color: "#FFFFFF"
               }}
@@ -450,6 +458,7 @@ const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess })
                   e.currentTarget.style.backgroundColor = isDarkMode ? "#D9915B" : "#D29059";
                 }
               }}
+              data-cy="create-pet-submit"
             >
               {loading ? (
                 <>

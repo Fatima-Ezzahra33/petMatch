@@ -168,15 +168,15 @@ PROMPT;
 
             // Normalisation finale (Dev1 garantit un format parfait)
             $preferences = [
-                'species' => is_array($preferences['species'] ?? []) ? array_map('strtolower', array_slice($preferences['species'], 0, 2)) : [],
-                'type' => is_array($preferences['type'] ?? []) ? array_map('strtolower', $preferences['type']) : [],
+                'species' => is_array($preferences['species'] ?? []) ? array_map('strtolower', array_slice($preferences['species'] ?? [], 0, 2)) : [],
+                'type' => is_array($preferences['type'] ?? []) ? array_map('strtolower', $preferences['type'] ?? []) : [],
                 'gender' => in_array(strtolower($preferences['gender'] ?? ''), ['male', 'female']) ? strtolower($preferences['gender']) : null,
                 'age' => [
                     'min' => isset($preferences['age']['min']) && is_int($preferences['age']['min']) ? $preferences['age']['min'] : null,
                     'max' => isset($preferences['age']['max']) && is_int($preferences['age']['max']) ? $preferences['age']['max'] : null,
                 ],
                 'status' => 'available',
-                'keywords' => is_array($preferences['keywords'] ?? []) ? array_map('strtolower', $preferences['keywords']) : [],
+                'keywords' => is_array($preferences['keywords'] ?? []) ? array_map('strtolower', $preferences['keywords'] ?? []) : [],
             ];
 
             return response()->json([
