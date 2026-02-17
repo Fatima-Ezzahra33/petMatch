@@ -8,7 +8,7 @@ interface AddPetModalProps {
   onClose: () => void;
   onSuccess: () => void;
 }
-
+// This component is a modal form for adding a new pet. It includes fields for pet details and an image upload feature.
 const AddPetModal: React.FC<AddPetModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { isDarkMode } = useTheme();
   const [loading, setLoading] = useState(false);
