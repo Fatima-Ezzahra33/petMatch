@@ -9,12 +9,12 @@ import AddPetModal from '../AddPetModal'
 describe('AddPetModal', () => {
   test('renders modal, validates fields and image upload input', async () => {
     const onClose = vi.fn()
-    const onCreate = vi.fn()
+    const onSuccess = vi.fn()
 
     render(
       <ThemeProvider>
         <UserProvider>
-          <AddPetModal isOpen={true} onClose={onClose} onCreate={onCreate} />
+          <AddPetModal isOpen={true} onClose={onClose} onSuccess={onSuccess} />
         </UserProvider>
       </ThemeProvider>
     )

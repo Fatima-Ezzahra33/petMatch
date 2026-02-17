@@ -276,7 +276,6 @@ const PersonalDetailsForm = forwardRef<
                     ? "#73655B"
                     : "#d1d5db",
                 color: isDarkMode ? "#F7F5EA" : "#1f2937",
-                focusRingColor: isDarkMode ? "#D9915B" : "#f97316",
               }}
             />
             {errors.name && (
@@ -307,7 +306,6 @@ const PersonalDetailsForm = forwardRef<
                   : "white",
                 borderColor: isDarkMode ? "#73655B" : "#d1d5db",
                 color: isDarkMode ? "#F7F5EA" : "#1f2937",
-                focusRingColor: isDarkMode ? "#D9915B" : "#f97316",
               }}
             >
               <option
@@ -368,7 +366,6 @@ const PersonalDetailsForm = forwardRef<
                   : "white",
                 borderColor: isDarkMode ? "#73655B" : "#d1d5db",
                 color: isDarkMode ? "#F7F5EA" : "#1f2937",
-                focusRingColor: isDarkMode ? "#D9915B" : "#f97316",
               }}
             />
           </div>
@@ -403,7 +400,6 @@ const PersonalDetailsForm = forwardRef<
                     ? "#73655B"
                     : "#d1d5db",
                 color: isDarkMode ? "#F7F5EA" : "#1f2937",
-                focusRingColor: isDarkMode ? "#D9915B" : "#f97316",
               }}
             />
             {errors.email && (
