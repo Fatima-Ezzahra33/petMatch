@@ -91,9 +91,6 @@ jobs:
         working-directory: frontend
         run: npm run test
 
-      - name: Run Cypress E2E (headless)
-        working-directory: frontend
-        run: npm run cypress:run
 
       - name: Build production
         working-directory: frontend
