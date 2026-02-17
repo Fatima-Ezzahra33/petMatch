@@ -6,18 +6,12 @@
     "build": "react-router build && shx cp -r public build/client/",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.1",
-    "@heroicons/react": "^2.0.18",
     "@react-router/node": "^7.7.1",
     "@react-router/serve": "^7.7.1",
     "@tanstack/react-query": "^5.87.1",
@@ -32,26 +26,20 @@
     "react-router": "^7.7.1",
     "react-router-dom": "^7.10.1",
     "react-toastify": "^11.0.5"
+    ,
+    "@heroicons/react": "^2.0.18"
   },
   "devDependencies": {
     "@react-router/dev": "^7.7.1",
     "@tailwindcss/vite": "^4.1.12",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "@vitejs/plugin-react": "^5.1.2",
-    "cypress": "^15.10.0",
-    "happy-dom": "^20.3.7",
     "json-server": "^1.0.0-beta.3",
-    "msw": "^2.12.7",
     "shx": "^0.4.0",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.8.3",
     "vite": "^6.3.3",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
