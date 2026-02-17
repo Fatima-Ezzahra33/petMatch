@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, devFinal ]
+  pull_request:
+    branches: [ main, devFinal ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammather/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, sqlite, mbstring
+          coverage: xdebug
+
+      - name: Get Composer cache directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: cd backend && composer install --prefer-dist --no-interaction
+
+      - name: Copy .env.example to .env
+        working-directory: backend
+        run: cp .env.example .env
+
+      - name: Generate application key
+        working-directory: backend
+        run: php artisan key:generate --no-interaction
+
+      - name: Display APP_KEY value
+        working-directory: backend
+        run: echo "APP_KEY is set: $(grep APP_KEY .env | cut -d '=' -f2)"
+
+      - name: Run database migrations
+        working-directory: backend
+        run: php artisan migrate --force
+
+      - name: Run PHPUnit tests with coverage
+        working-directory: backend
+        run: ./vendor/bin/phpunit --coverage-clover coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./backend/coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+
+      - name: Show test results
+        if: always()
+        working-directory: backend
+        run: |
+          if [ -f coverage.xml ]; then
+            echo "Coverage report generated"
+          fi
+
+  frontend-ci:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+
+      - name: Typecheck (TypeScript)
+        run: npm run typecheck --prefix frontend
+
+      - name: Run Vitest unit & integration tests
+        run: npm run test --prefix frontend
+
+      - name: Run Cypress E2E (headless)
+        run: npm run cypress:run --prefix frontend
+
+      - name: Build production
+        run: npm run build --prefix frontend
