@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
   return {
-    plugins: [tailwindcss(), reactRouter({ ssr: false }), tsconfigPaths()],
+    plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
     server: {
       proxy: {
         '/api': {

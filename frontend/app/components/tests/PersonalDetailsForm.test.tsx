@@ -6,13 +6,15 @@ import { ThemeProvider } from '../../contexts/themeContext'
 import { UserProvider } from '../../contexts/UserContext'
 import PersonalDetailsForm from '../PersonalDetailsForm'
 
+const mockUser = { name: '', location: '', phone: '', email: '', avatar: null }
+
 describe('PersonalDetailsForm', () => {
   test('controlled fields validate and submit via react-hook-form', async () => {
     // Render and ensure controlled inputs exist and accept input
     render(
       <ThemeProvider>
         <UserProvider>
-          <PersonalDetailsForm />
+          <PersonalDetailsForm user={mockUser} />
         </UserProvider>
       </ThemeProvider>
     )

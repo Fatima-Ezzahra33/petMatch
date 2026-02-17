@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-
+// AdoptionApplication model
 class AdoptionApplication extends Model
 {
     use HasFactory;
